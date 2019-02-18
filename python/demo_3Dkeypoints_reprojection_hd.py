@@ -37,13 +37,13 @@ for k,cam in cameras.iteritems():
 hd_idx = 0
 
 # Select an HD camera (0,0) - (0,30), where the zero in the first index means HD camera 
-cam = cameras[(0,5)]
+cam = cameras[(0, 5)]
 
 
 # Load the corresponding HD image
 image_path = hd_img_path+'{0:02d}_{1:02d}/{0:02d}_{1:02d}_{2:08d}.jpg'.format(cam['panel'], cam['node'], hd_idx)
 im = plt.imread(image_path)
-plt.figure(figsize=(15,15))
+plt.figure(figsize=(15, 15))
 
 '''
 ## Reproject 3D Body Keypoint onto the first HD camera
