@@ -25,10 +25,11 @@ else
 fi
 
 # Each sequence gets its own subdirectory
-NAME=data/$datasetName
-
-mkdir data/$datasetName
-cd data/$datasetName
+name=data/$datasetName
+if [ ! -d $name ]; then
+    mkdir -p $name
+fi
+cd $name
 
 
 ######################
@@ -79,18 +80,18 @@ $WGET $mO calibration_${datasetName}.json http://domedb.perception.cs.cmu.edu/we
 # 3D Body Keypoint (Coco19 keypoint definition)
 # Download 3D pose reconstruction results (by vga index, coco19 format)
 if [ ! -f hdPose3d_stage1_coco19.tar ]; then
-$WGET http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdPose3d_stage1_coco19.tar || rm -v hdPose3d_stage1_coco19.tar 
+$WGET $mO hdPose3d_stage1_coco19.tar  http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdPose3d_stage1_coco19.tar || rm -v hdPose3d_stage1_coco19.tar 
 fi
 
-# 3D Face 
-if [ ! -f hdFace3d.tar ]; then
-$WGET http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdFace3d.tar || rm -v hdFace3d.tar 
-fi
-
-# 3D Hand
-if [ ! -f hdHand3d.tar ]; then
-$WGET http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdHand3d.tar || rm -v hdHand3d.tar
-fi
+## 3D Face
+#if [ ! -f hdFace3d.tar ]; then
+#$WGET http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdFace3d.tar || rm -v hdFace3d.tar
+#fi
+#
+## 3D Hand
+#if [ ! -f hdHand3d.tar ]; then
+#$WGET http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdHand3d.tar || rm -v hdHand3d.tar
+#fi
 
 # Download kinect-rgb videos
-# Download point cloud data
+# Download point cl
