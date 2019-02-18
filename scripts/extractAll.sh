@@ -17,7 +17,8 @@ fmt=${2-jpg}
 DIR=$(dirname $(readlink -f $0))
 OLDDIR=$PWD
 
-cd $1
+name=data
+cd $name/$1
 
 # Extract 3D Keypoints
 if [ -f vgaPose3d_stage1_coco19.tar ]; then
