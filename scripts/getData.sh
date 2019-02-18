@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script downloads videos for a specific sequence:
 # ./getData.sh [sequenceName] [numVGAViews] [numHDViews]
