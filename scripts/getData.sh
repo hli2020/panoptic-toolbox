@@ -25,8 +25,10 @@ else
 fi
 
 # Each sequence gets its own subdirectory
-mkdir $datasetName		
-cd $datasetName
+NAME=data/$datasetName
+
+mkdir data/$datasetName
+cd data/$datasetName
 
 
 ######################
