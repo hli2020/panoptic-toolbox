@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Helper script to run other extraction tasks
 # Input argument is output format for image files (png or jpg)
 

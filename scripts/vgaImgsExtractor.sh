@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This extracts image files from VGA videos
 # It should be run from the same directory containing the folder "vgaVideos"
