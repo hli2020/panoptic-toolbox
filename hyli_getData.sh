@@ -7,4 +7,7 @@
 # ./getData.sh sampleData 10 0
 #
 
-bash ./getData.sh 160422_ultimatum1 0
+#sampleName=160422_ultimatum1
+sampleName=160422_haggling1
+bash ./scripts/getData.sh $sampleName 0
+bash ./scripts/extractAll.sh $sampleName

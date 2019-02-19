@@ -8,30 +8,32 @@ Follow these steps to set up a simple example:
 
 ### 1. Check out the codebase
 ```
-git clone https://github.com/CMU-Perceptual-Computing-Lab/panoptic-toolbox
+git clone https://github.com/hyli2020/panoptic-toolbox
 cd panoptic-toolbox
 ```
 
-### 2. Download a sample data
+### 2. Download a sample data and other data
 To download a dataset, named "171204_pose1_sample" in this example, run the following script.
 ```
-./scripts/getData.sh 171204_pose1_sample
+bash ./scripts/getData.sh 160422_ultimatum1
 ```
 
-This bash script requires curl or wget. 
+This bash script requires curl or wget.
 
 
 This script will create a folder "./171204_pose1_sample" and download the following files.
 
-* 171204_pose1_sample/hdVideos/hd_00_XX.mp4  #synchronized HD video files (31 views)
-* 171204_pose1_sample/vgaVideos/KINECTNODE%d/vga_XX_XX.mp4 #synchrponized VGA video files (480 views)
-* 171204_pose1_sample/calibration_171204_pose1_sample.json #calibration files
-* 171204_pose1_sample/hdPose3d_stage1_coco19.tar #3D Body Keypoint Data (coco19 keypoint definition)
-* 171204_pose1_sample/hdFace3d.tar #3D Face Keypoint Data 
-* 171204_pose1_sample/hdHand3d.tar #3D Hand Keypoint Data 
+* `171204_pose1_sample/hdVideos/hd_00_XX.mp4`                     #synchronized HD video files (31 views)
+* `171204_pose1_sample/vgaVideos/KINECTNODE%d/vga_XX_XX.mp4`      #synchrponized VGA video files (480 views)
+* `171204_pose1_sample/calibration_171204_pose1_sample.json`      #calibration files
+* `171204_pose1_sample/hdPose3d_stage1_coco19.tar`                #3D Body Keypoint Data (coco19 keypoint definition)
+* `171204_pose1_sample/hdFace3d.tar`                              #3D Face Keypoint Data 
+* `171204_pose1_sample/hdHand3d.tar`                              #3D Hand Keypoint Data 
 
+Note that this sample example currently does not have VGA videos.
 
-You can also download any other seqeunce through this script. Just use the the name of the target sequence instead of the "171204_pose1_sample". 
+You can also download any other seqeunce through this script. 
+Just use the the name of the target sequence instead of the "171204_pose1_sample". 
 
 For example, 
 
@@ -41,9 +43,7 @@ For example,
 
 for the full version of [171204_pose1](http://domedb.perception.cs.cmu.edu/171204_pose1.html) sequence.
 
-You may find the names of other sequences in our website:
 
-[Browsing dataset](http://domedb.perception.cs.cmu.edu/dataset.html).
 
 You can also specify the number of videos you want to donwload. 
 ```
@@ -57,18 +57,35 @@ For example, the following command will download 240 vga videos and 10 videos.
 
 Note that we have sorted the VGA camera order so that you download uniformly distributed view. 
 
+### 3. List of Available Sequences
 
-### 3. Extract the images & 3D keypoint data
+You can find the list of currently available sequences in the following link:
+
+[List of release sequences](https://docs.google.com/spreadsheets/d/1eoe74dHRtoMVVFLKCTJkAtF8zqxAnoo2Nt15CYYvHEE/edit?usp=sharing)
+
+You can see the example videos and other information of each sequence in our website:
+
+[Browsing dataset](http://domedb.perception.cs.cmu.edu/dataset.html).
+
+Check the 3D viewer in each sequence page where you can visualize 3D skeletons in your web browser. For example: 
+
+http://domedb.perception.cs.cmu.edu/171204_pose1.html
+
+### 4. Extract the images & 3D keypoint data
 
 This step requires [ffmpeg](https://ffmpeg.org/).
 ```
-./scripts/extractAll.sh sampleData
+bash ./scripts/extractAll.sh 160422_ultimatum1
 ```
-This will extract images, for example `sampleData/vgaImgs/01_01/01_01_00000000.jpg`, and the corresponding 3D skeleton data, for example `sampleData/vgaPose3d_stage1/body3DScene_00000000.json`.
+If you encounter some "xx.sh" permission denied issue, follow the suggestion 
+[here](https://stackoverflow.com/questions/18960689/ubuntu-says-bash-program-permission-denied).
+
+
+This will extract images, for example `171204_pose1_sample/hdImgs/00_00/00_00_00000000.jpg`, and the corresponding 3D skeleton data, for example `171204_pose1_sample/hdPose3d_stage1_coco19/body3DScene_00000000.json`.
 
 `extractAll.sh` is a simple script that combines the following set of commands (you shouldn't need to run these again):
 ```bash
-cd sampleData
+cd 171204_pose1_sample
 ../scripts/vgaImgsExtractor.sh # PNG files from VGA video (25 fps)
 ../scripts/hdImgsExtractor.sh # PNG files from HD video (29.97 fps)
 tar -xf vgaPose3d_stage1.tar # Extract skeletons at VGA framerate
@@ -76,7 +93,7 @@ tar -xf hdPose3d_stage1.tar # Extract skeletons for HD
 cd ..
 ```
 
-### 4. Run demo programs (Python)
+### 5. Run demo programs (Python)
 This codes require numpy, matplotlib.
 
 
@@ -99,16 +116,7 @@ The result should look like [this](https://github.com/CMU-Perceptual-Computing-L
 
 
 
-### 4. Run demo programs (Matlab)
 
-Note: Matlab code is outdated, and does not handle 3D keypoint outputs (coco19 body, face, hand). 
-Please see this code only for reference. We will update this later.
-
-Matlab example (outdated):
-```matlab
->>> cd matlab
->>> demo
-```
 
 KinopticStudio Toolbox
 ======================

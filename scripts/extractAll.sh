@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+
 # Helper script to run other extraction tasks
 # Input argument is output format for image files (png or jpg)
 
@@ -14,7 +15,9 @@ fi
 fmt=${2-jpg}
 
 # Figure out the path of helper scripts
-DIR=$(dirname $(readlink -f $0))
+#DIR=$(dirname $(readlink -f $0))
+COMMAND=$(perl -MCwd -e 'print Cwd::abs_path shift' $0)
+DIR=$(dirname $COMMAND)
 OLDDIR=$PWD
 
 name=data
@@ -30,13 +33,13 @@ if [ -f hdPose3d_stage1_coco19.tar ]; then
 fi
 
 
-if [ -f hdFace3d.tar ]; then
-	tar -xf hdFace3d.tar
-fi
-
-if [ -f hdHand3d.tar ]; then
-	tar -xf hdHand3d.tar
-fi
+#if [ -f hdFace3d.tar ]; then
+#	tar -xf hdFace3d.tar
+#fi
+#
+#if [ -f hdHand3d.tar ]; then
+#	tar -xf hdHand3d.tar
+#fi
 
 # Extract VGA images
 $DIR/vgaImgsExtractor.sh ${fmt}
