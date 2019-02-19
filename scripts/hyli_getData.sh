@@ -7,4 +7,4 @@
 # ./getData.sh sampleData 10 0
 #
 
-./getData.sh 160422_ultimatum1 0
+bash ./getData.sh 160422_ultimatum1 0
