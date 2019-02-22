@@ -11,6 +11,8 @@ Follow these steps to set up a simple example:
 git clone https://github.com/hyli2020/panoptic-toolbox
 cd panoptic-toolbox
 ```
+**NOTE**: just `bash ./hyli_getData.sh` and there you go! Forget about the rest below.
+
 
 ### 2. Download a sample data and other data
 To download a dataset, named "171204_pose1_sample" in this example, run the following script.
