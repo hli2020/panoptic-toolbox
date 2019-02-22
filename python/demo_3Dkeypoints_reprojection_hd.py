@@ -8,8 +8,8 @@ plt.rcParams['image.interpolation'] = 'nearest'
 import panutils
 
 # Setup paths
-data_path = '../'
-seq_name = '171204_pose1_sample'
+data_path = '../data/'
+seq_name = '160422_ultimatum1'
 
 hd_skel_json_path = data_path+seq_name+'/hdPose3d_stage1_coco19/'
 hd_face_json_path = data_path+seq_name+'/hdFace3d/'
@@ -23,21 +23,21 @@ with open(data_path+seq_name+'/calibration_{0}.json'.format(seq_name)) as cfile:
     calib = json.load(cfile)
 
 # Cameras are identified by a tuple of (panel#,node#)
-cameras = {(cam['panel'],cam['node']):cam for cam in calib['cameras']}
+cameras = {(cam['panel'], cam['node']): cam for cam in calib['cameras']}
 
 # Convert data into numpy arrays for convenience
-for k,cam in cameras.iteritems():    
+for k, cam in cameras.items():
     cam['K'] = np.matrix(cam['K'])
     cam['distCoef'] = np.array(cam['distCoef'])
     cam['R'] = np.matrix(cam['R'])
-    cam['t'] = np.array(cam['t']).reshape((3,1))
+    cam['t'] = np.array(cam['t']).reshape((3, 1))
     
 
 # Select HD frame
-hd_idx = 0
+hd_idx = 2000
 
 # Select an HD camera (0,0) - (0,30), where the zero in the first index means HD camera 
-cam = cameras[(0, 5)]
+cam = cameras[(0, 30)]
 
 
 # Load the corresponding HD image
@@ -51,7 +51,7 @@ plt.figure(figsize=(15, 15))
 
 # Edges between joints in the body skeleton
 body_edges = np.array([[1,2],[1,4],[4,5],[5,6],[1,3],[3,7],[7,8],[8,9],[3,13],[13,14],[14,15],[1,10],[10,11],[11,12]])-1
-plt.subplot(131)
+# plt.subplot(131)
 plt.title('3D Body Projection on HD view ({0})'.format(cam['name']))
 plt.imshow(im)
 currentAxis = plt.gca()
@@ -86,7 +86,7 @@ try:
                 plt.plot(pt[0,edge], pt[1,edge], color=colors[body['id']])
 
         # Show the joint numbers
-        for ip in xrange(pt.shape[1]):
+        for ip in range(pt.shape[1]):
             if pt[0,ip]>=0 and pt[0,ip]<im.shape[1] and pt[1,ip]>=0 and pt[1,ip]<im.shape[0]:
                 plt.text(pt[0,ip], pt[1,ip]-5, '{0}'.format(ip),color=colors[body['id']])
         
@@ -110,7 +110,7 @@ face_edges = np.array([ #[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[
                 [36,37],[37,38],[38,39],[39,40],[40,41],[41,36], #right eye
                 [42,43],[43,44],[44,45],[45,46],[46,47],[47,42], #left eye
                 [48,49],[49,50],[50,51],[51,52],[52,53],[53,54],[54,55],[55,56],[56,57],[57,58],[58,59],[59,48], #Lip outline
-                [60,61],[61,62],[62,63],[63,64],[64,65],[65,66],[66,67],[67,60] #Lip inner line 
+                [60,61],[61,62],[62,63],[63,64],[64,65],[65,66],[66,67],[67,60] #Lip inner line
                 ])
 plt.subplot(132)
 plt.title('3D Face Projection on HD view ({0})'.format(cam['name']))
@@ -126,13 +126,13 @@ try:
 
     # Cycle through all detected faces
     for face in fframe['people']:
-        
+
         # 3D Face has 70 3D joints, stored as an array [x1,y1,z1,x2,y2,z2,...]
         face3d = np.array(face['face70']['landmarks']).reshape((-1,3)).transpose()
 
         # Project skeleton into view (this is like cv2.projectPoints)
         pt = panutils.projectPoints(face3d,
-                      cam['K'], cam['R'], cam['t'], 
+                      cam['K'], cam['R'], cam['t'],
                       cam['distCoef'])
 
         # Show only points detected with confidence
@@ -149,7 +149,7 @@ try:
             if pt[0,ip]>=0 and pt[0,ip]<im.shape[1] and pt[1,ip]>=0 and pt[1,ip]<im.shape[0]:
                 plt.text(pt[0,ip], pt[1,ip]-5, '{0}'.format(ip),color=colors[face['id']])
         '''
-        
+
         plt.draw()
 
 except IOError as e:
@@ -181,7 +181,7 @@ try:
 
     # Cycle through all detected hands
     for hand in hframe['people']:
-        
+
         # 3D hands, right_hand and left_hand, have 21 3D joints, stored as an array [x1,y1,z1,x2,y2,z2,...]
 
         '''
@@ -191,7 +191,7 @@ try:
 
         # Project skeleton into view (this is like cv2.projectPoints)
         pt = panutils.projectPoints(hand3d,
-                      cam['K'], cam['R'], cam['t'], 
+                      cam['K'], cam['R'], cam['t'],
                       cam['distCoef'])
 
         # Show only points detected with confidence
@@ -217,7 +217,7 @@ try:
 
         # Project skeleton into view (this is like cv2.projectPoints)
         pt = panutils.projectPoints(hand3d,
-                      cam['K'], cam['R'], cam['t'], 
+                      cam['K'], cam['R'], cam['t'],
                       cam['distCoef'])
 
         # Show only points detected with confidence
@@ -234,7 +234,7 @@ try:
             if pt[0,ip]>=0 and pt[0,ip]<im.shape[1] and pt[1,ip]>=0 and pt[1,ip]<im.shape[0]:
                 plt.text(pt[0,ip], pt[1,ip]-5, '{0}'.format(ip),color=colors[hand['id']])
         '''
-        
+
         plt.draw()
 
 except IOError as e:
