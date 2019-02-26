@@ -10,6 +10,7 @@
 datasetName=${1-sampleData}
 numVGAViews=${2-1} #Specify the number of vga views you want to donwload. Up to 480
 numHDViews=${3-31} #Specify the number of hd views you want to donwload. Up to 31
+rootName=${4-data}
 
 # Select wget or curl, with appropriate options
 if command -v wget >/dev/null 2>&1; then 
@@ -25,7 +26,7 @@ else
 fi
 
 # Each sequence gets its own subdirectory
-name=data/$datasetName
+name=$rootName/$datasetName
 if [ ! -d $name ]; then
     mkdir -p $name
 fi
@@ -35,8 +36,9 @@ cd $name
 ######################
 # Download vga videos
 ######################
-mkdir -p vgaVideos	
-
+if [[ $numVGAViews -gt 0 ]]; then
+    mkdir -p vgaVideos
+fi
 # This order of cameras gives an approximately uniform sampling of views.
 # VGA panels range from 1..20
 # VGA nodes range from 1..24
@@ -70,12 +72,6 @@ done
 
 # Download calibration data
 $WGET $mO calibration_${datasetName}.json http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/calibration_${datasetName}.json || rm -v calibration_${datasetName}.json
-
-# MPI version is obsolte and no longer supported
-# Download 3D pose reconstruction results (MPI version, by hd index) 
-#$WGET http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdPose3d_stage1.tar
-# Download 3D pose reconstruction results (MPI version, by vga index)
-#$WGET http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/vgaPose3d_stage1.tar
 
 # 3D Body Keypoint (Coco19 keypoint definition)
 # Download 3D pose reconstruction results (by vga index, coco19 format)

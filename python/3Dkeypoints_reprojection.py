@@ -57,6 +57,21 @@ box_inflate = 100
 hd_idx = 16683
 hd_idx = 3508
 hd_idx = 9453
+# hd_idx = 11108   # IMPORTANT: confidence score < 0.1 and no show in (00_00) view
+# hd_idx = 10873       # only ONE point (too small)
+# hd_idx = 18493     # too small
+# hd_idx = 21343    # too small
+# hd_idx = 973    # ids are zero (it's ok)
+hd_idx = 4208   # this image is all green (corrupted)
+# hd_idx = 3837
+# hd_idx = 3613
+hd_idx = 3873
+hd_idx = 281  # view 2, valid>0.1, super weired
+hd_idx = 16100
+hd_idx = 2063   # two "neck" joints overlap -> heat map
+hd_idx = 18290   # overlap case
+hd_idx = 11474
+hd_idx = 13667
 
 cam_list = [
     (0, 0),
@@ -102,25 +117,26 @@ for entry in cam_list:
             pt = panutils.projectPoints(
                 skel[0:3, :], cam['K'], cam['R'], cam['t'], cam['distCoef'])
 
-            # Show only points detected with confidence
+            # Show only dot points detected with confidence
             valid = skel[3, :] > 0.1
 
             plt.plot(pt[0, valid], pt[1, valid], '.', color=colors[body['id'] % 7])
 
-            # Plot edges for each bone
+            # Plot VALID edges for each bone
             for edge in body_edges:
                 if valid[edge[0]] or valid[edge[1]]:
                     plt.plot(pt[0, edge], pt[1, edge], color=colors[body['id'] % 7])
 
             # Show the joint numbers
             for ip in range(pt.shape[1]):
-                if 0 <= pt[0, ip] < im.shape[1] and 0 <= pt[1, ip] < im.shape[0]:
-                    plt.text(pt[0, ip], pt[1, ip]-5, '{0}'.format(ip), color=colors[body['id'] % 7])
+                # if 0 <= pt[0, ip] < im.shape[1] and 0 <= pt[1, ip] < im.shape[0]:
+                plt.text(pt[0, ip], pt[1, ip]-5, '{0}'.format(ip), color=colors[body['id'] % 7])
 
-                    if ip == 1:  # nose
-                        plt.text(pt[0, ip], pt[1, ip]-100, '{0}'.format(body['id']),
-                                 color=colors[body['id'] % 7],
-                                 backgroundcolor='gray', fontsize='medium')
+                if ip == 1:  # nose
+                    # show id
+                    plt.text(pt[0, ip], pt[1, ip]-100, '{0}'.format(body['id']),
+                             color=colors[body['id'] % 7],
+                             backgroundcolor='gray', fontsize='medium')
             plt.draw()
             # infer box
             temp_a = pt[0, :] < im.shape[1]
