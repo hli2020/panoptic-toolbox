@@ -23,7 +23,9 @@ OLDDIR=$PWD
 name=data
 cd $name/$1
 
+#############################
 # Extract 3D Keypoints
+#############################
 if [ -f vgaPose3d_stage1_coco19.tar ]; then
 	tar -xf vgaPose3d_stage1_coco19.tar
 fi

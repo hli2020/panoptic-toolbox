@@ -32,6 +32,14 @@ if [ ! -d $name ]; then
 fi
 cd $name
 
+#####################
+# 3D Body Keypoint (Coco19 keypoint definition)
+#####################
+# Download 3D pose reconstruction results (by vga index, coco19 format)
+if [ ! -f hdPose3d_stage1_coco19.tar ]; then
+$WGET $mO hdPose3d_stage1_coco19.tar  http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdPose3d_stage1_coco19.tar || rm -v hdPose3d_stage1_coco19.tar
+fi
+
 
 ######################
 # Download vga videos
@@ -69,15 +77,11 @@ do
 	eval $cmd
 done
 
-
+#####################
 # Download calibration data
+#####################
 $WGET $mO calibration_${datasetName}.json http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/calibration_${datasetName}.json || rm -v calibration_${datasetName}.json
 
-# 3D Body Keypoint (Coco19 keypoint definition)
-# Download 3D pose reconstruction results (by vga index, coco19 format)
-if [ ! -f hdPose3d_stage1_coco19.tar ]; then
-$WGET $mO hdPose3d_stage1_coco19.tar  http://domedb.perception.cs.cmu.edu/webdata/dataset/$datasetName/hdPose3d_stage1_coco19.tar || rm -v hdPose3d_stage1_coco19.tar 
-fi
 
 ## 3D Face
 #if [ ! -f hdFace3d.tar ]; then
