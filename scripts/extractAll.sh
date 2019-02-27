@@ -12,7 +12,7 @@ fi
 
 # Format for extracted images.
 # Use png for best quality.
-fmt=${2-jpg}
+fmt=${3-jpg}
 
 # Figure out the path of helper scripts
 #DIR=$(dirname $(readlink -f $0))
@@ -20,7 +20,7 @@ COMMAND=$(perl -MCwd -e 'print Cwd::abs_path shift' $0)
 DIR=$(dirname $COMMAND)
 OLDDIR=$PWD
 
-name=data
+name=${2-data}
 cd $name/$1
 
 #############################
