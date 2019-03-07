@@ -10,21 +10,21 @@ import panutils
 
 # Edges between joints in the body skeleton
 body_edges = np.array([
-    [1, 2],
-    [1, 4],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [0, 9],
+    [2, 6],
+    [2, 12],
+    [3, 4],
     [4, 5],
-    [5, 6],
-    [1, 3],
-    [3, 7],
+    [6, 7],
     [7, 8],
-    [8, 9],
-    [3, 13],
-    [13, 14],
-    [14, 15],
-    [1, 10],
+    [9, 10],
     [10, 11],
-    [11, 12]
-]) - 1
+    [12, 13],
+    [13, 14],
+])
 
 # Setup paths
 data_path = '../data/'
@@ -72,6 +72,11 @@ hd_idx = 2063   # two "neck" joints overlap -> heat map
 hd_idx = 18290   # overlap case
 hd_idx = 11474
 hd_idx = 13667
+hd_idx = 18491
+hd_idx = 10808
+hd_idx = 23495
+
+PLOT_ALL_JOINTS = False   # whether to show outside joints (valid or not)
 
 cam_list = [
     (0, 0),
@@ -108,61 +113,78 @@ for entry in cam_list:
         # Cycle through all detected bodies
         for body in bframe['bodies']:
 
-            # There are 19 3D joints, stored as an array [x1,y1,z1,c1,x2,y2,z2,c2,...]
-            # where c1 ... c19 are per-joint detection confidences
-            skel = np.array(body['joints19']).reshape((-1, 4)).transpose()     # 4x19
+            if body['id'] in list(range(100)):
+            # if body['id'] in [47, 46]:
+                # There are 19 3D joints, stored as an array [x1,y1,z1,c1,x2,y2,z2,c2,...]
+                # where c1 ... c19 are per-joint detection confidences
+                skel = np.array(body['joints19']).reshape((-1, 4)).transpose()     # 4x19
 
-            # Project skeleton into view (this is like cv2.projectPoints)
-            # pt: 3x19
-            pt = panutils.projectPoints(
-                skel[0:3, :], cam['K'], cam['R'], cam['t'], cam['distCoef'])
+                # Project skeleton into view (this is like cv2.projectPoints)
+                # pt: 3x19
+                pt = panutils.projectPoints(
+                    skel[0:3, :], cam['K'], cam['R'], cam['t'], cam['distCoef'])
 
-            # Show only dot points detected with confidence
-            valid = skel[3, :] > 0.1
+                # Show only dot points detected with confidence
+                valid = skel[3, :] > 0.1
 
-            plt.plot(pt[0, valid], pt[1, valid], '.', color=colors[body['id'] % 7])
+                # 1. DOT
+                plt.plot(pt[0, valid], pt[1, valid], '.',
+                         color=colors[body['id'] % 7], markersize=15,
+                         markeredgecolor='w')
 
-            # Plot VALID edges for each bone
-            for edge in body_edges:
-                if valid[edge[0]] or valid[edge[1]]:
-                    plt.plot(pt[0, edge], pt[1, edge], color=colors[body['id'] % 7])
+                # 2. Plot VALID edges for each bone
+                for edge in body_edges:
+                    if valid[edge[0]] and valid[edge[1]]:
+                        plt.plot(pt[0, edge], pt[1, edge], color=colors[body['id'] % 7])
 
-            # Show the joint numbers
-            for ip in range(pt.shape[1]):
-                # if 0 <= pt[0, ip] < im.shape[1] and 0 <= pt[1, ip] < im.shape[0]:
-                plt.text(pt[0, ip], pt[1, ip]-5, '{0}'.format(ip), color=colors[body['id'] % 7])
+                # 3. Show *ALL/or valid* joint numbers
+                for ip in range(pt.shape[1]):
+                    curr_color = colors[body['id'] % 7]
+                    if PLOT_ALL_JOINTS:
+                        plt.text(pt[0, ip], pt[1, ip]-5, '{0}'.format(ip), color=curr_color)
+                        if valid[ip] is False:
+                            plt.plot(pt[0, ip], pt[1, ip], 'D',
+                                     color=colors[body['id'] % 7], markersize=15, )
+                    else:
+                        if 0 <= pt[0, ip] < im.shape[1] and 0 <= pt[1, ip] < im.shape[0]:
+                            plt.text(pt[0, ip], pt[1, ip] - 5, '{0}'.format(ip),
+                                     color=curr_color)
+                            if valid[ip] == 0:
+                                plt.plot(pt[0, ip], pt[1, ip], 'v',
+                                         color=colors[body['id'] % 7], markersize=3,)
 
-                if ip == 1:  # nose
-                    # show id
-                    plt.text(pt[0, ip], pt[1, ip]-100, '{0}'.format(body['id']),
-                             color=colors[body['id'] % 7],
-                             backgroundcolor='gray', fontsize='medium')
-            plt.draw()
-            # infer box
-            temp_a = pt[0, :] < im.shape[1]
-            temp_b = pt[0, :] >= 0
-            x_mask = temp_a & temp_b
-            # if not any(x_mask):
-            #     continue
-            temp_a = pt[1, :] < im.shape[0]
-            temp_b = pt[1, :] >= 0
-            y_mask = temp_a & temp_b
-            # if not any(y_mask):
-            #     continue
-            mask = x_mask & y_mask
-            if not any(mask):
-                continue
-            x1 = min(min(pt[0, mask]), x1)   # only consider reachable points
-            x2 = max(max(pt[0, mask]), x2)
-            y1 = min(min(pt[1, mask]), y1)
-            y2 = max(max(pt[1, mask]), y2)
+                    if ip == 1:  # nose
+                        # show id
+                        plt.text(pt[0, ip], pt[1, ip]-100, '{0}'.format(body['id']),
+                                 color=colors[body['id'] % 7],
+                                 backgroundcolor='gray', fontsize='medium')
+                # infer box
+                temp_a = pt[0, :] < im.shape[1]
+                temp_b = pt[0, :] >= 0
+                x_mask = temp_a & temp_b
+                # if not any(x_mask):
+                #     continue
+                temp_a = pt[1, :] < im.shape[0]
+                temp_b = pt[1, :] >= 0
+                y_mask = temp_a & temp_b
+                # if not any(y_mask):
+                #     continue
+                mask = x_mask & y_mask
+                if not any(mask):
+                    continue
+                x1 = min(min(pt[0, mask]), x1)   # only consider reachable points
+                x2 = max(max(pt[0, mask]), x2)
+                y1 = min(min(pt[1, mask]), y1)
+                y2 = max(max(pt[1, mask]), y2)
+                # plt.show()
 
         x1 = max(0, x1-box_inflate)
         x2 = min(im.shape[1], x2+box_inflate)
         y1 = max(0, y1-box_inflate)
         y2 = min(im.shape[0], y2+box_inflate)
         rect = patches.Rectangle(
-            (x1, y1), (x2-x1+1), (y2-y1+1), linewidth=4, edgecolor='r', facecolor='none')
+            (x1, y1), (x2-x1+1), (y2-y1+1),
+            linewidth=3, edgecolor='w', facecolor='none')
         currentAxis.add_patch(rect)
 
     except IOError as e:

@@ -8,7 +8,8 @@
 
 fmt=${1-jpg}
 
-
+# TODO: try to delete original videos due to large volume
+# or only download view-related (eg, only four) sources
 inputFolderName=hdVideos
 outputFolderName=hdImgs
 camIdx=-1;
