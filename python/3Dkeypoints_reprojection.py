@@ -79,13 +79,13 @@ hd_idx = 23495
 PLOT_ALL_JOINTS = False   # whether to show outside joints (valid or not)
 
 cam_list = [
-    (0, 0),
-    # (0, 5),
-    # (0, 10),
+    (0, 26),
+    (0, 15),
+    (0, 10),
     # (0, 15),
     # (0, 20),
     # (0, 25),
-    # (0, 30),
+    (0, 30),
 ]
 for entry in cam_list:
     # Select an HD camera (0,0) - (0,30), where the zero in the first index means HD camera
@@ -114,7 +114,7 @@ for entry in cam_list:
         for body in bframe['bodies']:
 
             if body['id'] in list(range(100)):
-            # if body['id'] in [47, 46]:
+            # if body['id'] in [41, 46]:
                 # There are 19 3D joints, stored as an array [x1,y1,z1,c1,x2,y2,z2,c2,...]
                 # where c1 ... c19 are per-joint detection confidences
                 skel = np.array(body['joints19']).reshape((-1, 4)).transpose()     # 4x19

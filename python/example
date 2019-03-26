@@ -1,0 +1,98 @@
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+# %matplotlib inline
+plt.rcParams['image.interpolation'] = 'nearest'
+
+# For camera projection (with distortion)
+import panutils
+from mpl_toolkits.mplot3d import Axes3D
+
+# Setup paths
+data_path = '../data/'
+seq_name = '160422_ultimatum1'
+
+vga_skel_json_path = data_path+seq_name+'/vgaPose3d_stage1/'
+vga_img_path = data_path+seq_name+'/vgaImgs/'
+
+hd_skel_json_path = data_path+seq_name+'/hdPose3d_stage1_coco19/'
+hd_img_path = data_path+seq_name+'/hdImgs/'
+
+# Edges between joints in the skeleton
+edges = np.array([[1,2],[1,4],[4,5],[5,6],[1,3],[3,7],[7,8],[8,9],[3,13],[13,14],[14,15],[1,10],[10,11],[11,12]])-1
+colors = plt.cm.hsv(np.linspace(0, 1, 20)).tolist()
+
+
+with open(data_path + seq_name + '/calibration_{0}.json'.format(seq_name)) as cfile:
+    calib = json.load(cfile)
+
+# Cameras are identified by a tuple of (panel#,node#)
+cameras = {(cam['panel'], cam['node']): cam for cam in calib['cameras']}
+
+# Convert data into numpy arrays for convenience
+for k, cam in cameras.items():
+    cam['K'] = np.matrix(cam['K'])
+    cam['distCoef'] = np.array(cam['distCoef'])
+    cam['R'] = np.matrix(cam['R'])
+    cam['t'] = np.array(cam['t']).reshape((3, 1))
+
+# Select the first 10 cameras in a uniformly sampled order
+cams = list(panutils.get_uniform_camera_order())[0:10]
+cams = [(0,26), (0,10), (0,15), (0,30)]
+sel_cameras = [cameras[cam].copy() for cam in cams]
+COLOR = ['green', 'blue', 'pink', 'chocolate']
+
+fig = plt.figure(figsize=(15, 15))
+ax = fig.add_subplot(111, projection='3d')
+ax.view_init(50, 90)
+
+# Draw all HD cameras in black
+hd_all = []
+cnt = 0
+for k, cam in cameras.items():
+    if cam['name'].startswith('00_'):
+        cnt += 1
+        cc = (-cam['R'].transpose() * cam['t'])
+        # if cc[1] > -80:
+        #     color = 'red'
+        # else:
+        color = [0, 0, 0]
+        ax.scatter(cc[0], cc[1], cc[2], '.', color=color)
+        ax.text(cc[0, 0], cc[1, 0], cc[2, 0]+10,
+                '{:d}, {:d}'.format(int(cc[1, 0]), int(cc[2, 0])),
+                color='gray')
+        # if cam['name'] not in cams:
+        # show index
+        ax.text(cc[0, 0], cc[1, 0], cc[2, 0] - 20, cam['name'][-2:])
+        hd_all.append(cc)
+
+hd_all = np.array(hd_all).squeeze()
+# Selected camera subset in green
+for i, cam in enumerate(sel_cameras):
+    cc = (-cam['R'].transpose() * cam['t'])
+    ax.scatter(cc[0], cc[1], cc[2], '.', color=COLOR[i], s=100)
+    # print('name: {}, color: {}, loc: {}'.format(
+    #     cam['name'], COLOR[i], cc))
+    ax.text(cc[0,0], cc[1,0], cc[2,0]-20, cam['name'][-2:], color=COLOR[i])
+
+ax.scatter(0, 0, 0, '.', color='red', s=100)
+ax.text(0, 0, 0, "Origin", color='red')
+# # Bodies
+# for ids in range(len(bframe['bodies'])):
+#     body = bframe['bodies'][ids]
+#     skel = np.array(body['joints19']).reshape((-1, 4)).transpose()
+#
+#     for edge in edges:
+#         if valid[edge[0]] or valid[edge[1]]:
+#             ax.plot(skel[0, edge], skel[1, edge], skel[2, edge], color=colors[body['id']])
+
+ax.set_aspect('equal')
+ax.set_xlim3d([-300, 300])
+ax.set_ylim3d([-300, 300])
+ax.set_zlim3d([-300, 300])
+ax.set_xlabel('X axis')
+ax.set_ylabel('Y axis')
+ax.set_zlabel('Z axis')
+
+plt.show()
+a = 1
