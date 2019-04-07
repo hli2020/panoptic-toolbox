@@ -28,7 +28,7 @@ for sampleName in "${arr[@]}"
 do
    echo "downloading and extracting .. $sampleName"
    # or do whatever with individual element of the array
-   bash ./scripts/getData.sh $sampleName 0 31 data
+   bash ./scripts/getData.sh $sampleName 0 4 data
    bash ./scripts/extractAll.sh $sampleName data
    echo "done!"
 done
