@@ -8,8 +8,8 @@
 #
 
 declare -a arr=(
-#"160422_ultimatum1"
-#"160422_haggling1"
+"160422_ultimatum1"
+"160422_haggling1"
 "160224_haggling1"
 "160226_haggling1"
 "160906_band1"

@@ -15,6 +15,8 @@ cd panoptic-toolbox
 
 Forget about the rest below.
 
+The size of the whole dataset with all HD cameras after extracting into images, is about 1.5T; whereas the size with only four views is about 150G.
+
 ----
 ### 2. Download a sample data and other data
 To download a dataset, named "171204_pose1_sample" in this example, run the following script.
